@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 
 // Importação do Expo-Câmera
-import { Camera, CameraView, useCameraPermissions } from "expo-camera";
+import { CameraView, useCameraPermissions } from "expo-camera";
 
 function CameraComponent(){
     // Estado que define se a camêra será frontal ou traseira 'front' ou 'back'
@@ -19,7 +19,7 @@ function CameraComponent(){
     const [permission, requestPermission] = useCameraPermissions();
 
     // Estado para guardar a foto capturada
-    const [capturedPhoto setCapturedPhoto] = useState(null);
+    const [capturedPhoto, setCapturedPhoto] = useState(null);
 
     // Referencia para acesso direto aos métodos da câmera
     const cameraRef = useRef(null);
@@ -32,13 +32,13 @@ function CameraComponent(){
 
     // Caso permission não tenha tido retorno ainda
     if (!permission) {
-        return <view/>
+        return <View/>
     }
 
     // Retorno com a permissão nao concedida
     if(!permission.granted){
         return(
-            <View>
+            <View style={styles.container}>
                 <Text>Preciso de sua permissão para rodar</Text>
                 <Button onPress={requestPermission} title="Conceder permissão!"/>
             </View>
@@ -65,25 +65,27 @@ function CameraComponent(){
     // Caso haja uma foto capturada ela é exibida
     if (capturedPhoto){
         return(
-            <View>
-                <View>
+            <View style={styles.container}>
+                <View style={styles.tirar_outra}>
                     <Button title="Tirar outra foto" onPress={() => setCapturedPhoto(null)}/>
                 </View>
-                <Image source={{uri:capturedPhoto.uri}}/>
+                <Image source={{uri:capturedPhoto.uri}} style={styles.container}/>
             </View>
         )
     }
 
     // Renderização padrão (ainda sem foto tirada)
     return (
-        <View>
-            <CameraView facing={facing} ref={cameraRef}>
-                <TouchableOpacity onPress={toggleCameraFacing}>
-                    <Text>Virar camera</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={takePicture}>
-                    <Text>Tirar Foto</Text>
-                </TouchableOpacity>
+        <View style={styles.container}>
+            <CameraView facing={facing} ref={cameraRef} style={styles.Camera}>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+                        <Text>Virar camera</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity  style={styles.button} onPress={takePicture}>
+                        <Text>Tirar Foto</Text>
+                    </TouchableOpacity>
+                </View>
             </CameraView>
         </View>
     )
